@@ -1,10 +1,14 @@
+let playerScore = 0
+let computerScore = 0
+const buttons = document.querySelectorAll('input')
+
 function getPLayerChoice(userInput) {
     userInput = userInput.toLowerCase();
 
     if (userInput === 'rock' || userInput === 'paper' || userInput === 'scissors')
         return userInput;
     else
-        console.log('Invalid input, please choose between rock, paper, or scissors.')
+        console.log('Invalid input, please choose between rock, paper, or scissors.');
 
 }
 
@@ -12,53 +16,81 @@ function getComputerChoice() {
     const randomNumber = Math.floor(Math.random() * 3)
     switch (randomNumber) {
         case 0:
-            return 'rock'
+            return 'rock';
         case 1:
-            return 'paper'
+            return 'paper';
         case 2:
-            return 'scissors'
+            return 'scissors';
     }
 }
 
-function playRound(playerSelection, computerSelection){
-    
-    if (playerSelection === computerSelection)
-        return 'Tie';
+function playRound(playerSelection){
+    const computerSelection = getComputerChoice();
+    let result = "";
+    let outcome = 0;
 
-    if (computerSelection === 'rock')
+    if (playerSelection === computerSelection)
+        outcome = 0;
+    else if (computerSelection === 'rock')
     {
         if (playerSelection === 'paper')
-            return 'Won';
+            outcome = 1;
         else
-            return 'Lose';
+            outcome = 2;
     }
     else if (computerSelection === 'paper')
     {
         if (playerSelection === 'rock')
-            return 'Lose';
+            outcome = 2;
         else
-            return 'Win';
-    }
+            outcome = 1;
+    }   
     else
     {
         if (playerSelection === 'rock')
-            return 'Win';
+            outcome = 1;
         else
-            return 'Lose';
+            outcome = 2;
     }
+
+    switch (outcome){
+        case 0: result = 'Tie! You were close!';  break;
+        case 1: result = 'Won! Congrats!'; playerScore++; break;
+        case 2: result = 'Lost! Better luck on the next one!'; computerScore++;
+    }
+
+    if (computerScore == 5){
+        result += '<br><br>I won the game! Reload the page to play again!'; disableButtons();}
+    else if (playerScore == 5){
+        result += '<br><br>You won the game! Reload the page to play again!'; disableButtons();}
+
+    document.getElementById('result').innerHTML = result;
+    document.getElementById('score').innerHTML = 'You: ' + playerScore + ' Computer: ' + computerScore;
+
+    return;
 }
 
 function game(){
-    for (let i = 0; i < 5; i++)
-    {
-        const playerSelection = getPLayerChoice(prompt('Rock..Paper..Scissors!! (What do you throw?)'));
-        const computerSelection = getComputerChoice();
-    
-        console.log('You threw: ' + playerSelection);
-        console.log('The computer threw: ' + computerSelection)
+    //const playerSelection = getPLayerChoice(prompt('Rock..Paper..Scissors!! (What do you throw?)'));
+    const playerSelection = getPLayerChoice('');
+    const computerSelection = getComputerChoice();
 
-        console.log(playRound(playerSelection,computerSelection));
-    }
+    console.log('You threw: ' + playerSelection);
+    console.log('The computer threw: ' + computerSelection)
+
+    console.log(playRound(playerSelection,computerSelection));
 }
 
-game();
+function disableButtons() {
+    buttons.forEach(elem => {
+        elem.disabled = true
+    })
+}
+
+buttons.forEach(button =>{
+    button.addEventListener('click', function(){
+        playRound(button.value)
+    })
+})
+
+//game();
